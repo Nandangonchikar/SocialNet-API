@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from fastapi import Body, Depends, FastAPI, Response, status, HTTPException
 from random import randint
 import psycopg2
@@ -52,14 +52,14 @@ def root():  #Function name doesn't matter
     return {"message": "Welcome to fastAPI learning"} 
      
 #Get all the posts
-@app.get("/posts")
+@app.get("/posts",response_model=List[schemas.PostResponse])
 def post(db: Session = Depends(get_db)): 
     # cursor.execute(""" SELECT * FROM posts """)
     # my_posts=cursor.fetchall()
     my_posts=db.query(models.Post).all()    #through sql alchemy
-    return {"data": my_posts}
+    return my_posts
 
-@app.post("/posts",status_code=status.HTTP_201_CREATED)
+@app.post("/posts",status_code=status.HTTP_201_CREATED,response_model=schemas.PostResponse)
 def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db)):   #return should be 201 for post
     # post_dict=post.dict()
     # post_dict['id']=randint(0,100000)
@@ -73,10 +73,10 @@ def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db)):   #retu
     db.add(new_post)
     db.commit()
     db.refresh(new_post)  #return the new data created in the new_post variable
-    return {"data": new_post}
+    return new_post
 
 
-@app.get("/posts/{id}")  #id id path parameter
+@app.get("/posts/{id}",response_model=schemas.PostResponse)  #id id path parameter
 def get_post(id: int, response:Response,db: Session = Depends(get_db)): #Get a single post
     # post=find_post(id)
 
@@ -87,7 +87,7 @@ def get_post(id: int, response:Response,db: Session = Depends(get_db)): #Get a s
                             detail=f"Post with id: {id} not found")
         # response.status_code=status.HTTP_404_NOT_FOUND
         # return {"message": f"No post found with ID: {id}"}
-    return {"data": my_post}   
+    return  my_post   
 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id:int,db: Session = Depends(get_db)):
@@ -106,7 +106,7 @@ def delete_post(id:int,db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put("/posts/{id}")
-def update_post(id:int, post: schemas.CreatePost,db: Session = Depends(get_db)):
+def update_post(id:int, post: schemas.CreatePost,db: Session = Depends(get_db),response_model=schemas.PostResponse):
     # USING pyscop
     # cursor.execute("""UPDATE posts SET title =%s, content =%s , published =%s WHERE id=%s RETURNING *""", (post.title, post.content, post.published,id),)
     # updated_post=cursor.fetchone()
