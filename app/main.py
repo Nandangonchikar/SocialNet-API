@@ -1,6 +1,5 @@
 from typing import Optional
 from fastapi import Body, Depends, FastAPI, Response, status, HTTPException
-from pydantic import BaseModel
 from random import randint
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -11,20 +10,12 @@ from sqlalchemy.orm import Session
 # local imports
 from . import models
 from .database import engine,get_db
-
+from . import schemas
 
 models.Base.metadata.create_all(bind=engine)
 
 app=FastAPI()
 
-
-        
-#Define a schema for users to send data to post. using pydantic
-class Post(BaseModel):
-    title: str
-    content: str
-    published: bool = True
-    # rating: Optional[int]
 
 while True:
         try:
@@ -59,11 +50,6 @@ def find_index_post(id):
 @app.get("/")
 def root():  #Function name doesn't matter
     return {"message": "Welcome to fastAPI learning"} 
-
-@app.get("/sqlalchemy")
-def test_posts(db: Session = Depends(get_db)):
-    posts=db.query(models.Post).all()
-    return {"data": posts}
      
 #Get all the posts
 @app.get("/posts")
@@ -74,7 +60,7 @@ def post(db: Session = Depends(get_db)):
     return {"data": my_posts}
 
 @app.post("/posts",status_code=status.HTTP_201_CREATED)
-def createPosts(post: Post,db: Session = Depends(get_db)):   #return should be 201 for post
+def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db)):   #return should be 201 for post
     # post_dict=post.dict()
     # post_dict['id']=randint(0,100000)
     # my_posts.append(post_dict)
@@ -120,7 +106,7 @@ def delete_post(id:int,db: Session = Depends(get_db)):
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @app.put("/posts/{id}")
-def update_post(id:int, post: Post,db: Session = Depends(get_db)):
+def update_post(id:int, post: schemas.CreatePost,db: Session = Depends(get_db)):
     # USING pyscop
     # cursor.execute("""UPDATE posts SET title =%s, content =%s , published =%s WHERE id=%s RETURNING *""", (post.title, post.content, post.published,id),)
     # updated_post=cursor.fetchone()
