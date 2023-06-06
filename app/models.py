@@ -1,5 +1,7 @@
 from .database import Base
 from sqlalchemy import TIMESTAMP, Column, Integer, String, Boolean, text
+
+#ThisPost tells how the table should be there. like what xcolumns and all
 class Post(Base):
     __tablename__ = 'posts'
 
