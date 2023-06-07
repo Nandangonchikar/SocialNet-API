@@ -5,12 +5,9 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-
-
 # local imports
-from . import models
+from . import models,schemas,utils
 from .database import engine,get_db
-from . import schemas
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -120,3 +117,23 @@ def update_post(id:int, post: schemas.CreatePost,db: Session = Depends(get_db),r
     updated_post.update(post.dict(),synchronize_session=False)
     db.commit()
     return {"Succesfully updated": updated_post.first()}
+
+#...........................................................................
+@app.post("/users",status_code=status.HTTP_201_CREATED, response_model=schemas.UserCreateResponse)
+def create_user(user: schemas.UserCreate ,db: Session = Depends(get_db)):
+    #hash password
+    hashed_pwd=utils.hash(user.password)
+    user.password=hashed_pwd
+    new_user=models.User(**user.dict())
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)  #return the new data created in the new_post variable
+    return new_user
+
+@app.get("/users/{id}",response_model=schemas.UserCreateResponse)  #id id path parameter
+def get_user(id: int, db: Session = Depends(get_db)):
+    user=db.query(models.User).filter(models.User.id==id).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"User with id: {id} not found")    
+    return user
