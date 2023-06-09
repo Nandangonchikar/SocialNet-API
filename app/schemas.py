@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, EmailStr
 import datetime
 #Define a schema for users to send data to post. using pydantic
@@ -27,3 +28,17 @@ class UserCreateResponse(BaseModel):
     created_at: datetime.datetime
     class Config:
         orm_mode=True
+
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    class Config:
+        orm_mode=True
+
+class TokenData(BaseModel):
+    id:Optional[str]=None
