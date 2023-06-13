@@ -10,9 +10,9 @@ router=APIRouter(
         tags=['posts']
         )
 
-@router.get("/")
-def root():  #Function name doesn't matter
-    return {"message": "Welcome to fastAPI learning"} 
+# @router.get("/")
+# def root():  #Function name doesn't matter
+#     return {"message": "Welcome to fastAPI learning"} 
      
 #Get all the posts
 @router.get("/",response_model=List[schemas.PostResponse])
