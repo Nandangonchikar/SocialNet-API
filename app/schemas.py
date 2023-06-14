@@ -11,17 +11,6 @@ class PostBase(BaseModel):
 class CreatePost(PostBase): #extend the features of the base class
     pass
 
-class PostResponse(PostBase):  #will inherit other 3 fields!!
-    id: int
-    created_at: datetime.datetime
-
-    class Config:
-        orm_mode=True
-
-class UserCreate(BaseModel): 
-    email: EmailStr
-    password: str
-
 class UserCreateResponse(BaseModel):
     id:int
     email:EmailStr
@@ -29,6 +18,18 @@ class UserCreateResponse(BaseModel):
     class Config:
         orm_mode=True
 
+
+class PostResponse(PostBase):  #will inherit other 3 fields!!
+    id: int
+    created_at: datetime.datetime
+    owner_id: int
+    owner: UserCreateResponse
+    class Config:
+        orm_mode=True
+
+class UserCreate(BaseModel): 
+    email: EmailStr
+    password: str
 
 class UserLogin(BaseModel):
     email: EmailStr

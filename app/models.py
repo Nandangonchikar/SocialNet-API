@@ -1,5 +1,6 @@
 from .database import Base
-from sqlalchemy import TIMESTAMP, Column, Integer, String, Boolean, text
+from sqlalchemy import TIMESTAMP, Column, ForeignKey, Integer, String, Boolean, text
+from sqlalchemy.orm import relationship
 
 #ThisPost tells how the table should be there. like what xcolumns and all
 class Post(Base):
@@ -11,7 +12,10 @@ class Post(Base):
     content=Column(String, nullable=False)
     published=Column(Boolean, server_default='TRUE',nullable=False)
     created_at=Column(TIMESTAMP(timezone=True),nullable=False, server_default=text('now()'))
+    owner_id=Column(Integer,ForeignKey("users.id",ondelete="CASCADE"), nullable=False,)
 
+    owner=relationship("User")  #setting up a relationship so we can get the details/name of the user based on the owner_id automatically
+    
 class User(Base):
     __tablename__ = 'users'
     id=Column(Integer, primary_key=True,nullable=False)
