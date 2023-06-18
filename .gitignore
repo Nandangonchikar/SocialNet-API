@@ -3,3 +3,4 @@ __pycache__
 app/__pycache__
 app/readme.md
 app/__init__.py
+.env

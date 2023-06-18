@@ -1,4 +1,5 @@
 from fastapi import  Depends, FastAPI, Response, status, HTTPException, APIRouter
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from typing import List, Optional
 
@@ -10,12 +11,11 @@ router=APIRouter(
         tags=['posts']
         )
 
-# @router.get("/")
-# def root():  #Function name doesn't matter
-#     return {"message": "Welcome to fastAPI learning"} 
+
      
 #Get all the posts
-@router.get("/",response_model=List[schemas.PostResponse])
+# @router.get("/",response_model=List[schemas.PostResponse])
+@router.get("/",response_model=List[schemas.PostResponseVotes])
 def post(db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user),
           limit: int=10,skip:int=0, search: Optional[str]=""): 
     # cursor.execute(""" SELECT * FROM posts """)
@@ -24,9 +24,14 @@ def post(db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_curre
     #limit and skip ,filter are for query parameters
     my_posts=db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()    #through sql alchemy returns all the posts
 
+    #Retrieve the number of votes for the post
+    results=db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+                        models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(
+                        models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+
     #return only logged in users posts
     # my_posts=db.query(models.Post).filter(models.Post.owner_id==current_user.id).all() 
-    return my_posts
+    return results
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.PostResponse)
 def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):   #return should be 201 for post
@@ -45,12 +50,14 @@ def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db),current_u
     return new_post
 
 
-@router.get("/{id}",response_model=schemas.PostResponse)  #id id path parameter
+@router.get("/{id}",response_model=schemas.PostResponseVotes)  #id id path parameter
 def get_post(id: int, response:Response,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)): #Get a single post
     # post=find_post(id)
 
-    my_post=db.query(models.Post).filter(models.Post.id == id).first()
-  
+    # my_post=db.query(models.Post).filter(models.Post.id == id).first()
+    my_post=db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(
+                        models.Vote, models.Vote.post_id==models.Post.id, isouter=True).group_by(
+                        models.Post.id).filter(models.Post.id == id).first()   
     if not my_post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Post with id: {id} not found")

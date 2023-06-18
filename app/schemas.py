@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, conint
 import datetime
 #Define a schema for users to send data to post. using pydantic
 class PostBase(BaseModel):
@@ -27,6 +27,10 @@ class PostResponse(PostBase):  #will inherit other 3 fields!!
     class Config:
         orm_mode=True
 
+class PostResponseVotes(BaseModel): 
+    Post: PostResponse
+    votes: int
+
 class UserCreate(BaseModel): 
     email: EmailStr
     password: str
@@ -38,6 +42,10 @@ class UserLogin(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
 
 
 class TokenData(BaseModel):
