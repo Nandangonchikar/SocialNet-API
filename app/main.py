@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-
+from fastapi.middleware.cors import CORSMiddleware
 # local imports
 from . import models
 from .database import engine
@@ -7,7 +7,21 @@ from .routers import post, user,auth,vote
 
 models.Base.metadata.create_all(bind=engine)
 
+
 app=FastAPI()
+
+#for allowing cross origin requests, so that we can use this api from other domains
+#If we give * api can be accessed from any domain domain ex: www.google.com, www.urwebsite.com
+origins=['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(post.router)
 app.include_router(user.router)
 app.include_router(auth.router)
