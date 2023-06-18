@@ -13,7 +13,10 @@ router=APIRouter(
 def vote(vote: schemas.Vote, db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
 
     #if user tries to vote on an post which is not there.
-    post=db.query(models.Vote).filter(models.Post.id==vote.post_id).first()
+    tr2y=db.query(models.Post).filter(models.Post.id==vote.post_id).first()
+    print(tr2y)
+    post=db.query(models.Post).filter(models.Post.id==vote.post_id).first()
+    print(post)
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                              detail=f"Post with id {vote.post_id} not found")
