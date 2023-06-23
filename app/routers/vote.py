@@ -10,7 +10,9 @@ router=APIRouter(
     )
 
 @router.post("/",status_code=status.HTTP_201_CREATED)
-def vote(vote: schemas.Vote, db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
+def vote(vote: schemas.Vote,
+         db: Session = Depends(get_db),
+         current_user:int=Depends(oauth2.get_current_user)):
 
     #if user tries to vote on an post which is not there.
     post=db.query(models.Post).filter(models.Post.id==vote.post_id).first()

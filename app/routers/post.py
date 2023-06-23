@@ -16,8 +16,11 @@ router=APIRouter(
 #Get all the posts
 # @router.get("/",response_model=List[schemas.PostResponse])
 @router.get("/",response_model=List[schemas.PostResponseVotes])
-def post(db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user),
-          limit: int=10,skip:int=0, search: Optional[str]=""): 
+def post(db: Session = Depends(get_db),
+         current_user:int=Depends(oauth2.get_current_user),
+         limit: int=10,
+         skip:int=0,
+         search: Optional[str]=""): 
     # cursor.execute(""" SELECT * FROM posts """)
     # my_posts=cursor.fetchall()
 
@@ -34,7 +37,9 @@ def post(db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_curre
     return results
 
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.PostResponse)
-def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):   #return should be 201 for post
+def createPosts(post: schemas.CreatePost,
+                db: Session = Depends(get_db),
+                current_user:int=Depends(oauth2.get_current_user)):   #return should be 201 for post
     # post_dict=post.dict()
     # post_dict['id']=randint(0,100000)
     # my_posts.routerend(post_dict)
@@ -50,8 +55,11 @@ def createPosts(post: schemas.CreatePost,db: Session = Depends(get_db),current_u
     return new_post
 
 
-@router.get("/{id}",response_model=schemas.PostResponseVotes)  #id id path parameter
-def get_post(id: int, response:Response,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)): #Get a single post
+@router.get("/{id}",response_model=List[schemas.PostResponseVotes])  #id id path parameter
+def get_post(id: int,
+             response:Response,
+             db: Session = Depends(get_db),
+             current_user:int=Depends(oauth2.get_current_user)): #Get a single post
     # post=find_post(id)
 
     # my_post=db.query(models.Post).filter(models.Post.id == id).first()
@@ -66,7 +74,9 @@ def get_post(id: int, response:Response,db: Session = Depends(get_db),current_us
     return  my_post   
 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id:int,db: Session = Depends(get_db),current_user:int=Depends(oauth2.get_current_user)):
+def delete_post(id:int,
+                db: Session = Depends(get_db),
+                current_user:int=Depends(oauth2.get_current_user)):
     #delete a post through pyscop
     # cursor.execute("""DELETE FROM posts WHERE id =%s RETURNING * """,(str(id)))
     # deleted_post=cursor.fetchone()
@@ -89,7 +99,11 @@ def delete_post(id:int,db: Session = Depends(get_db),current_user:int=Depends(oa
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 @router.put("/{id}")
-def update_post(id:int, post: schemas.CreatePost,db: Session = Depends(get_db),response_model=schemas.PostResponse,current_user:int=Depends(oauth2.get_current_user)):
+def update_post(id:int,
+                post: schemas.CreatePost,
+                db: Session = Depends(get_db),
+                response_model=schemas.PostResponse,
+                current_user:int=Depends(oauth2.get_current_user)):
     # USING pyscop
     # cursor.execute("""UPDATE posts SET title =%s, content =%s , published =%s WHERE id=%s RETURNING *""", (post.title, post.content, post.published,id),)
     # updated_post=cursor.fetchone()
