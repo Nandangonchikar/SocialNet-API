@@ -55,7 +55,7 @@ def createPosts(post: schemas.CreatePost,
     return new_post
 
 
-@router.get("/{id}",response_model=List[schemas.PostResponseVotes])  #id id path parameter
+@router.get("/{id}",response_model=schemas.PostResponseVotes)  #id id path parameter
 def get_post(id: int,
              response:Response,
              db: Session = Depends(get_db),
@@ -98,11 +98,10 @@ def delete_post(id:int,
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
-@router.put("/{id}")
+@router.put("/{id}",response_model=schemas.PostResponse)
 def update_post(id:int,
                 post: schemas.CreatePost,
                 db: Session = Depends(get_db),
-                response_model=schemas.PostResponse,
                 current_user:int=Depends(oauth2.get_current_user)):
     # USING pyscop
     # cursor.execute("""UPDATE posts SET title =%s, content =%s , published =%s WHERE id=%s RETURNING *""", (post.title, post.content, post.published,id),)
@@ -119,4 +118,5 @@ def update_post(id:int,
                             detail=f"Not authorised to perform this action")
     updated_post.update(post.dict(),synchronize_session=False)
     db.commit()
-    return {"Succesfully updated": updated_post.first()}
+    # return {"Succesfully updated": updated_post.first()}
+    return updated_post.first()
