@@ -30,7 +30,7 @@ app.include_router(vote.router)
 
 @app.get("/")
 def root():  #Function name doesn't matter
-    return {"message": "Welcome to fastAPI learning"} 
+    return {"message": "Welcome to fastAPI learning Hsisya"} 
 
 
 # my_posts=[{"title" :"title of the post", "content" :"content of the post", "id":1},
