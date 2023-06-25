@@ -1,12 +1,12 @@
 name: Build and Deploy code
 
-on: [push,pull_request]
+on: [push, pull_request]
 
-jobs: 
+jobs:
   job1:
     runs-on: ubuntu-latest
     steps:
-      -name: pulling git repo to runner ubuntu machine
-       uses: actions/checkout@v2
-      -name: say hi to the world
-       run: echo "Hello World"
+      - name: pulling git repo to runner ubuntu machine
+        uses: actions/checkout@v2
+      - name: say hi to the world
+        run: echo "Hello World"
