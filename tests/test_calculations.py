@@ -4,7 +4,7 @@ import pytest
 @pytest.mark.parametrize("test_input1,test_input2,expected",[
     (5,12,17),
     (7,14,21),
-    (0,7,8),
+    (0,7,7),
     (-1,6,5)
 ])
 
