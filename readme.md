@@ -45,14 +45,14 @@ To get started with the SocialNet-API, follow these steps:
 
   ## Setting up PostgresDB connection
    - Create a .env file in the root directory and add the below environment variables details.
-        DATABASE_HOSTNAME =localhost #default
-        DATABASE_PORT=5432 #default
-        DATABASE_PASSWORD=#your db pswd#
-        DATABASE_NAME=#DB Name#
-        DATABASE_USERNAME=postgres #default
-        SECRET_KEY=#secret key for password hashing algorithm#
-        ALGORITHM = HS256 #Type of the algorithm for hashing
-        ACCESS_TOKEN_EXPIRE_MINUTES = 30  #Number of minutes after which the access token will expire
+        DATABASE_HOSTNAME =localhost #default  
+        DATABASE_PORT=5432 #default  
+        DATABASE_PASSWORD=#your db pswd#  
+        DATABASE_NAME=#DB Name#  
+        DATABASE_USERNAME=postgres #default  
+        SECRET_KEY=#secret key for password hashing algorithm#  
+        ALGORITHM = HS256 #Type of the algorithm for hashing  
+        ACCESS_TOKEN_EXPIRE_MINUTES = 30  #Number of minutes after which the access token will expire  
 
 ## API Endpoints
  Below you will find details on each endpoint, including their functionality, request/response models, and any required dependencies.
